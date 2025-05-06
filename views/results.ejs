@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <%- include("partials/navbar.ejs") %>
+
+  <div class="results-grid">
+    <% pets.forEach((pet, index) => { %>
+      <div class="pet-card" onclick="openModal('<%= index %>')">
+        <img src="/images/<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>">
+        <h3><%= pet.pet_name || pet['Pet Name'] %></h3>
+        <div class="pet-info">
+          <p><strong>Breed:</strong> <%= pet.Breed %></p>
+          <p><strong>Age:</strong> <%= pet.age %></p>
+          <p><strong>Location:</strong> <%= pet.url %></p>
+          <p><%= pet.description.substring(0, 100) %>...</p>
+        </div>
+      </div>
+
+      <div id="modal-<%= index %>" class="results-modal">
+        <div class="results-modal-content">
+          <span class="results-modal-close" onclick="closeModal('<%= index %>')">&times;</span>
+          <h2><%= pet.pet_name || pet['Pet Name'] %></h2>
+          <img src="/images/<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>" style="width: 100%; border-radius: 10px;">
+          <p><strong>Breed:</strong> <%= pet.Breed %></p>
+          <p><strong>Age:</strong> <%= pet.age %></p>
+          <p><strong>Location:</strong> <a href="<%= pet.url %>" target="_blank"><%= pet.url %></a></p>
+          <p><%= pet.description %></p>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <%- include("partials/footer.ejs") %>
+
+  <script>
+    function openModal(index) {
+      document.getElementById('modal-' + index).style.display = 'block';
+    }
+
+    function closeModal(index) {
+      document.getElementById('modal-' + index).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      document.querySelectorAll('.results-modal').forEach(modal => {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    };
+  </script>
+</body>
+</html>
+
+
