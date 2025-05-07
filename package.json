@@ -4,6 +4,25 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
-    "mysql2": "^3.14.1"
-  }
+    "mysql2": "^3.14.1",
+    "node": "^22.15.0"
+  },
+  "name": "cst336-final-project-group-18-",
+  "version": "1.0.0",
+  "description": "Our group project involves using the PetfFinder API in order to make a webpage related to pets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krishneetRAJ/CST336-Final-Project-Group-18-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krishneetRAJ/CST336-Final-Project-Group-18-/issues"
+  },
+  "homepage": "https://github.com/krishneetRAJ/CST336-Final-Project-Group-18-#readme"
 }

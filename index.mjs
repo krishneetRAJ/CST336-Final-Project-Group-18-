@@ -129,6 +129,21 @@ app.get('/', (req, res) => {
       res.send(rows);
   });
 
+  app.get('/result', async (req, res) => {
+    const { type } = req.query;
+  
+    let sql = `
+      SELECT * FROM Pet 
+      WHERE type LIKE ?
+      LIMIT 50
+    `;
+  
+    const [rows] = await conn.query(sql, [`%${type || ''}%`]);
+  
+    res.render('results.ejs', { pets: rows });
+  });
+  
+
   app.listen(3000, ()=>{
       console.log("Express server running")
   })
