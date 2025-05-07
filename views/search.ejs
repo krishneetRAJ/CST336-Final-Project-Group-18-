@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searching For Pets</title>
+</head>
+<body>
+    <h1>Animal Search</h1>
+    <form action="/search-results" method="GET">
+        <label for="animal_type">Animal Type:</label>
+    <select name="animal_type" id="animal_type">
+      <% animalTypes.forEach(type => { %> 
+        <option value="<%= type %>"><%= type %></option>
+      <% }) %>
+    </select>
+
+    <label for="primary_breed">Breed:</label>
+    <select name="primary_breed" id="primary_breed">
+      <% breeds.forEach(breed => { %>
+        <option value="<%= breed %>"><%= breed %></option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Search</button>
+  </form>
+</body>
+</html>
+
+<!-- The .forEach was from an online resource because it didn't let me use
+a regular for loop -->
