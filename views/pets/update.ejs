@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Pet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+  <h2>Update Pet</h2>
+  <form action="/pets/update/<%= pet.id %>" method="POST">
+    <div class="mb-3"><label>Pet Name</label><input name="name" class="form-control" value="<%= pet.name %>"></div>
+    <div class="mb-3"><label>Breed</label><input name="breed_id" class="form-control" value="<%= pet.breed_id %>"></div>
+    <div class="mb-3"><label>Petfinder ID</label><input name="petfinder_id" class="form-control" value="<%= pet.petfinder_id %>"></div>
+    <div class="mb-3"><label>Type</label><input name="type" class="form-control" value="<%= pet.type %>"></div>
+    <div class="mb-3"><label>Age</label><input name="age" class="form-control" value="<%= pet.age %>"></div>
+    <div class="mb-3"><label>Gender</label><input name="gender" class="form-control" value="<%= pet.gender %>"></div>
+    <div class="mb-3"><label>Size</label><input name="size" class="form-control" value="<%= pet.size %>"></div>
+    <div class="mb-3"><label>Description</label><textarea name="description" class="form-control"><%= pet.description %></textarea></div>
+    <div class="mb-3"><label>Status</label><input name="status" class="form-control" value="<%= pet.status %>"></div>
+    <div class="mb-3"><label>URL</label><input name="url" class="form-control" value="<%= pet.url %>"></div>
+    <div class="mb-3"><label>Image URL</label><input name="image_url" class="form-control" value="<%= pet.image_url %>"></div>
+    <div class="mb-3"><label>Last Update</label><input name="last_update" type="date" class="form-control" value="<%= pet.last_update.toISOString().split('T')[0] %>"></div>
+    <button class="btn btn-warning" type="submit">Update Pet</button>
+  </form>
+  
+</body>
+</html>
