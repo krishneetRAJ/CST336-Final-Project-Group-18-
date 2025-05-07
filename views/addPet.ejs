@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add New Pet</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <div class="container">
+    <h2>Add a New Pet</h2>
+    <% if (error) { %>
+      <p style="color: green;"><%= error %></p>
+    <% } %>
+
+    <form action="/add-pet" method="POST">
+      <label>Name:</label><input type="text" name="name" required><br>
+      <label>Breed:</label><input type="text" name="breed" required><br>
+      <label>Type:</label><input type="text" name="type" required><br>
+      <label>Age:</label><input type="number" name="age" required><br>
+      <label>Gender:</label><input type="text" name="gender" required><br>
+      <label>Size:</label><input type="text" name="size"><br>
+      <label>Description:</label><textarea name="description"></textarea><br>
+      <label>Status:</label><input type="text" name="status"><br>
+      <label>URL:</label><input type="text" name="url"><br>
+      <label>Image URL:</label><input type="text" name="image_url"><br>
+      <button type="submit">Add Pet</button>
+    </form>
+  </div>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

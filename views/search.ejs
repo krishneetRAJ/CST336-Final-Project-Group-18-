@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Searching For Pets</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <h1>Animal Search</h1>
-    <form action="/search-results" method="GET">
-        <label for="animal_type">Animal Type:</label>
-    <select name="animal_type" id="animal_type">
-      <% animalTypes.forEach(type => { %> 
-        <option value="<%= type %>"><%= type %></option>
-      <% }) %>
-    </select>
-
-    <label for="primary_breed">Breed:</label>
-    <select name="primary_breed" id="primary_breed">
-      <% breeds.forEach(breed => { %>
-        <option value="<%= breed %>"><%= breed %></option>
-      <% }) %>
-    </select>
-
-    <button type="submit">Search</button>
-  </form>
+    <form action="/results" method="GET">
+      <label for="type">Animal Type:</label>
+      <select name="type" id="type" required>
+        <option value="dog">Dog</option>
+        <option value="cat">Cat</option>
+        <option value="rabbit">Rabbit</option>
+        <!-- Add more types if needed -->
+      </select>
+    
+      <label for="breed">Breed:</label>
+      <input type="text" name="breed" id="breed">
+    
+      <button type="submit">Search</button>
+    </form>
+    
+    
 </body>
 </html>
 
