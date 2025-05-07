@@ -102,6 +102,17 @@ app.get('/', (req, res) => {
      res.render('login.ejs', {isAuthenticated: false});
   });
 
+  app.get('/search', async(req, res) => {
+    let animalTypes = ['Dog', 'Cat', 'Rabbit', 'Bird'];
+    let breeds = ['Labrador', 'Persian', 'Dutch', 'Parrot'];
+    res.render('search.ejs', { animalTypes, breeds });
+  });
+
+  app.get('/search-results', (req, res) => {
+    let { animal_type, primary_breed } = req.query;
+    res.send(`You searched for ${animal_type} of breed ${primary_breed}`);
+  });
+
   app.post('/login', async(req, res) => {
      let username = req.body.username;
      let password = req.body.password;
