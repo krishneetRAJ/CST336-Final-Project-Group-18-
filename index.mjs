@@ -97,6 +97,10 @@ app.get('/', (req, res) => {
      res.render('home.ejs', {fullName: req.session.fullName});
   });
 
+  app.get('/about', async(req, res) => {
+    res.render('about.ejs', {fullName: req.session.fullName});
+  });
+
  app.get('/logout', (req, res) => {
      req.session.destroy();
      res.render('login.ejs', {isAuthenticated: false});
