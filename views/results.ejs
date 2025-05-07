@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Search Results</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
+  <link rel="stylesheet" href="/css/styles.css">
 <body>
   <%- include("partials/navbar.ejs") %>
 
   <div class="results-grid">
     <% pets.forEach((pet, index) => { %>
       <div class="pet-card" onclick="openModal('<%= index %>')">
-        <img src="/images/<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>">
+        <img src="<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>">
         <h3><%= pet.pet_name || pet['Pet Name'] %></h3>
         <div class="pet-info">
           <p><strong>Breed:</strong> <%= pet.Breed %></p>
@@ -24,7 +23,7 @@
         <div class="results-modal-content">
           <span class="results-modal-close" onclick="closeModal('<%= index %>')">&times;</span>
           <h2><%= pet.pet_name || pet['Pet Name'] %></h2>
-          <img src="/images/<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>" style="width: 100%; border-radius: 10px;">
+          <img src="<%= pet.image_url %>" alt="Photo of <%= pet.pet_name || pet['Pet Name'] %>" style="width: 100%; border-radius: 10px;">
           <p><strong>Breed:</strong> <%= pet.Breed %></p>
           <p><strong>Age:</strong> <%= pet.age %></p>
           <p><strong>Location:</strong> <a href="<%= pet.url %>" target="_blank"><%= pet.url %></a></p>
