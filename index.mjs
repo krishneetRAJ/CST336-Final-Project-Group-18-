@@ -141,7 +141,7 @@ app.get('/', (req, res) => {
       }
   
       req.session.user = username;
-      res.redirect('/about'); // ✅ Send to about page after successful login
+      res.redirect('/about');
     } catch (err) {
       console.error(err);
       res.render('login', { error: 'An error occurred. Please try again.' });
