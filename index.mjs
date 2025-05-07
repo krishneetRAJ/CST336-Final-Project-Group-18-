@@ -49,15 +49,18 @@ app.use(session({
     let data = await response.json();
     return data.access_token;
   }
-
+  app.use((req, res, next) => {
+    res.locals.isAuthenticated = !!req.session.user;
+    next();
+  });
 //routes
 app.get('/', (req, res) => {
-     if(req.session.userAuthenticated){
-         res.redirect('/home');
-    }else{
-         res.render('login.ejs', {isAuthenticated: false});
-    }
-  });
+  if (req.session.user) {
+    res.render('addPet', { error: null });
+  } else {
+    res.redirect('/login');
+  }
+});
 
   app.get('/api/pets', async(req, res) => {
     try {
@@ -113,25 +116,74 @@ app.get('/', (req, res) => {
     res.send(`You searched for ${animal_type} of breed ${primary_breed}`);
   });
 
-  app.post('/login', async(req, res) => {
-     let username = req.body.username;
-     let password = req.body.password;
-     let hashedPassword;
-
-     let sql = `SELECT * FROM admin WHERE username=?`;
-     const [rows] = await conn.query(sql, [username]);
-     if(rows.length > 0){
-         hashedPassword = rows[0].password;
-     }
-     const match = await bcrypt.compare(password, hashedPassword);
-     if(match){
-         req.session.userAuthenticated = true;
-         req.session.fullName = rows[0].firstName + " " + rows[0].lastName;
-         res.render('home.ejs');
-     }else{
-         res.render('login.ejs', {"error": "Wrong credentials!"});
-   }
+  app.get('/login', (req, res) => {
+    res.render('login', { error: null });
   });
+
+  app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const conn = await pool.getConnection();
+  
+    try {
+      const [users] = await conn.execute(
+        'SELECT * FROM Admin WHERE username = ?',
+        [username]
+      );
+  
+      if (users.length === 0) {
+        return res.render('login', { error: 'User not found' });
+      }
+  
+      const hash = users[0].Password;
+  
+      if (!hash || !(await bcrypt.compare(password, hash))) {
+        return res.render('login', { error: 'Incorrect password' });
+      }
+  
+      req.session.user = username;
+      res.redirect('/about'); // ✅ Send to about page after successful login
+    } catch (err) {
+      console.error(err);
+      res.render('login', { error: 'An error occurred. Please try again.' });
+    } finally {
+      conn.release();
+    }
+  });
+
+  app.get('/about', (req, res) => {
+    res.render('about');
+  });
+
+  app.get('/contact', (req, res) => {
+    res.render('contact');
+  });
+
+  app.post('/add-pet', async (req, res) => {
+    const {
+      name, breed, type, age, gender,
+      size, description, status, url, image_url
+    } = req.body;
+  
+    try {
+      const conn = await pool.getConnection();
+  
+      await conn.execute(
+        `INSERT INTO pets 
+          (name, breed, type, age, gender, size, description, status, url, image_url, last_update) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+        [name, breed, type, age, gender, size, description, status, url, image_url]
+      );
+  
+      conn.release();
+      res.render('addPet', { error: 'Pet added successfully!' });
+    } catch (err) {
+      console.error(err);
+      res.render('addPet', { error: 'Error adding pet. Please try again.' });
+    }
+  });
+  
+  
+  
 
   //dbTest
   app.get("/dbTest", async(req, res) => {
@@ -140,19 +192,68 @@ app.get('/', (req, res) => {
       res.send(rows);
   });
 
-  app.get('/result', async (req, res) => {
-    const { type } = req.query;
+  app.get('/results', async (req, res) => {
+    const { type = 'dog', breed = '' } = req.query;
   
-    let sql = `
-      SELECT * FROM Pet 
-      WHERE type LIKE ?
-      LIMIT 50
-    `;
+    try {
+      const token = await getAccessToken();
+      let query = `https://api.petfinder.com/v2/animals?type=${type}&limit=20`;
   
-    const [rows] = await conn.query(sql, [`%${type || ''}%`]);
+      if (breed) {
+        query += `&breed=${encodeURIComponent(breed)}`;
+      }
   
-    res.render('results.ejs', { pets: rows });
+      const response = await fetch(query, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+  
+      const data = await response.json();
+      res.render('results', { pets: data.animals, type, breed });
+    } catch (err) {
+      console.error(err);
+      res.render('results', { pets: [], type: '', breed: '' });
+    }
   });
+  
+  
+  // Sign Up Page
+app.get('/signup', (req, res) => {
+  res.render('signUp');
+});
+
+// Handle Sign Up Submission
+app.post('/signup', async (req, res) => {
+  const { username, password, phone } = req.body;
+
+  try {
+    const conn = await pool.getConnection();
+
+    const [existing] = await conn.execute(
+      'SELECT * FROM Admin WHERE username = ?',
+      [username]
+    );
+
+    if (existing.length > 0) {
+      res.render('signUp', { error: 'Username already exists.' });
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await conn.execute(
+        'INSERT INTO Admin (`username`, `password`, `Phone Number`) VALUES (?, ?, ?)',
+        [username, hashedPassword, phone]
+      );
+      res.render('login', { error: null });
+
+    }
+
+    conn.release();
+  } catch (err) {
+    console.error(err);
+    res.render('signUp', { error: 'An error occurred. Please try again.' });
+  }
+});
+
   
 
   app.listen(3000, ()=>{
