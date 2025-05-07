@@ -8,6 +8,10 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
+const CLIENT_ID = `vG3QvobvScNhftDZmVNS7ODavIQkipb6xKiavPqiyuJlrJu0pf`;
+const CLIENT_SECRET = `E7XNvOk6IFptMx5zGJnV6YF7CzM70hZ9jINflvjN`;
+const NINJA_KEY = `qD7h3vQr/uCDaoX/kXND0g==tfsGYchxfiFYX3EV`;
+
 //for Express to get values using POST method
 app.use(express.urlencoded({extended:true}));
 
@@ -30,12 +34,62 @@ app.use(session({
  });
   const conn = await pool.getConnection();
 
+  async function getAccessToken(){
+    let response = await fetch(`https://api.petfinder.com/v2/oauth2/token`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            "grant_type": "client_credentials",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
+        })
+    });
+    let data = await response.json();
+    return data.access_token;
+  }
+
 //routes
 app.get('/', (req, res) => {
      if(req.session.userAuthenticated){
          res.redirect('/home');
     }else{
          res.render('login.ejs', {isAuthenticated: false});
+    }
+  });
+
+  app.get('/api/pets', async(req, res) => {
+    try {
+        let token = await getAccessToken();
+    
+        let pet_response = await fetch('https://api.petfinder.com/v2/animals?limit=10', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        let data = await pet_response.json();
+        res.json(data); // send JSON to frontend
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch animals from Petfinder' });
+      }
+  });
+
+  app.get('/animals', async(req, res) => {
+    let name = req.query.name || "cheetah"; //default to cheetah
+    console.log("Requested name:", name);
+    let response = await fetch(`https://api.api-ninjas.com/v1/animals?name=${name}`, {
+    headers: {
+      'X-Api-Key': NINJA_KEY
+    }
+  });
+
+    const data = await response.json();
+    console.log(data); // helpful for debugging
+    res.json(data);
+    if (data.length === 0) {
+        return res.json({ message: "No animal found. Try something like 'cat', 'dog', or 'lion'." });
     }
   });
 
